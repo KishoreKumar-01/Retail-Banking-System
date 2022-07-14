@@ -9,24 +9,24 @@ phases:
     commands:
       - echo "Pre_build"
       - echo "Logging in to Amazon ECR"
-      - $(aws ecr get-login  --no-include-email --region ap-northeast-1)
+      - $(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 338102783115.dkr.ecr.us-east-1.amazonaws.com)
   build:
     commands:
       - echo "Build"
       - echo "Entered build phase"
       - echo "Building Java application"
-      - cd accountservice
-      - mvn -DskipTests clean package
-      - docker build -t ij025-pod1-account-ms-registry:latest .
-      - docker tag ij025-pod1-account-ms-registry:latest 941516478045.dkr.ecr.ap-northeast-1.amazonaws.com/ij025-pod1-account-ms-registry:latest
+      - cd Account-MS
+      - mvn clean package
+      - docker build -t ij032-pod5-account-microservices .
+      - docker tag ij032-pod5-account-microservices:latest 338102783115.dkr.ecr.us-east-1.amazonaws.com/ij032-pod5-account-microservices:latest
 
   post_build:
     commands:
       - echo "Post_build"
-      - docker push 941516478045.dkr.ecr.ap-northeast-1.amazonaws.com/ij025-pod1-account-ms-registry:latest
-      - printf '[{"name":"account-ms-container","imageUri":"%s"}]' 941516478045.dkr.ecr.ap-northeast-1.amazonaws.com/ij025-pod1-account-ms-registry:latest > taskdefinition.json
+      - docker push 338102783115.dkr.ecr.us-east-1.amazonaws.com/ij032-pod5-account-microservices:latest
+      - printf '[{"name":"account-ms-container","imageUri":"%s"}]' docker push 338102783115.dkr.ecr.us-east-1.amazonaws.com/ij032-pod5-account-microservices:latest > taskdefinition.json
       - cat taskdefinition.json
 
 artifacts:
   files:
-      - accountservice/taskdefinition.json
+      - Account-MS/taskdefinition.json
